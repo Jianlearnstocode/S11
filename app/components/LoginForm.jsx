@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
-
 export default function LoginForm() {
   const router = useRouter();
   const [cookies, setCookie] = useCookies();
@@ -13,7 +12,6 @@ export default function LoginForm() {
   });
   const [isloading, setIsLoading] = useState(false);
   const [msg, setMsg] = useState("");
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -29,19 +27,18 @@ export default function LoginForm() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const json = await res.json();
-      console.log(json)
       setMsg(json.detail);
       setIsLoading(false);
       setCookie("token", json.token);
       setCookie("email", json.email);
-      // router.push("/");
+      if(json.token){
+        router.push("/")
+      }
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
-      setMsg('Error signing up, please check your credentials');
+      setMsg('Error signing in, please check your credentials');
     }
   };
-
   return (
     <div className="flex flex-col justify-center flex-1 min-h-full px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -49,7 +46,6 @@ export default function LoginForm() {
           Sign in to your account
         </h2>
       </div>
-
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form
           className="space-y-6"
@@ -79,7 +75,6 @@ export default function LoginForm() {
               />
             </div>
           </div>
-
           <div>
             <div className="flex items-center justify-between">
               <label
@@ -104,14 +99,13 @@ export default function LoginForm() {
               />
             </div>
           </div>
-
           <div>
             <button
               type="submit"
               disabled={isloading}
-              className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              className="flex w-full justify-center disabled:bg-gray-500 disabled:cursor-not-allowed rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
-              Sign in
+              {isloading ? "Loading..." : "Sign in"}
             </button>
             <span className="inline-block my-4 text-xs text-white ">
               Don't have an account?{" "}
